@@ -46,7 +46,7 @@ func (v *verifier) VerifySignature(signature string, message string, addressHex 
 	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(message), message)
 	hash := crypto.Keccak256Hash([]byte(msg))
 
-	// convert hex string to bytes
+	// convert signature to bytes, removing 0x prefix
 	sig, err := hex.DecodeString(signature[2:])
 	if err != nil {
 		return false, err

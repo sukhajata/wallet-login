@@ -24,7 +24,7 @@ const WalletSelector = ({ closeModal }) => {
     connectWithWalletConnect(onSuccess, onError);
   }
 
-  const onSuccess = (account, result) => {
+  const onSuccess = (account) => {
     setLoading(false);
     dispatch(setAddress(account));
     dispatch(setConnected(true));

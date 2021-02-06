@@ -24,8 +24,10 @@ func Test_Regex(t *testing.T) {
 
 // TestVerifier_IsSmartContract_True - result should be true
 func TestVerifier_IsSmartContract_True(t *testing.T) {
-	//addressHex := "0x77f7111B2b211BC504dE66b13F3A8a04cD182842"
 	addressHex := "0x5119b5e3a7bff084732a7ec41efed8aa0c4cd6d4"
+	//addressHex := "0x096CEb79d7D4112d7C86B3Fc24fB6b69Fa52cbD6" // trust
+	//addressHex := "0xf77642C9b7d1CA7f21547ab1517edCBF63ea47B5" // pillar
+	// "0xFe269c3A935e93E4425dD6f88c04215d92929D0E" // imToken
 
 	ethClient, err := ethclient.Dial(infura)
 	if err != nil {
@@ -62,9 +64,9 @@ func TestVerifier_IsSmartContract_False(t *testing.T) {
 }
  */
 func TestVerifier_VerifySmartContractWallet(t *testing.T) {
-	addressHex := "0x77f7111B2b211BC504dE66b13F3A8a04cD182842"
-	message := "Follow Niftytown.com!"
-	signature := "051912aa60d32687c0e9dc37d335b1bb226c24a31fca40a23cce11e8b417bee11ca668ead2e901ab276eea194e70c4eec71908f10fecc1390f187fb56d7ce2c81bd17faa5de3424c79cfc2dc8b0b074229efedc40cbeac8c835a373589b0b122277bae737503b29ceedf735ab2148523854be4818bb66c13a0b3f28349357678801c"
+	addressHex := "0x096CEb79d7D4112d7C86B3Fc24fB6b69Fa52cbD6"
+	message := "Hi from Wallet Login Example. Please sign this message so we can verify that you are the owner of this wallet"
+	signature := "0xac1c77e7445d2299d437c00c7a0c1d305e843607bebed506df18fa474a9ec001624538cc128dd06edf464255fa909bdb46cba87773462825bd9d7e3273aaa7811b"
 	hash := crypto.Keccak256Hash([]byte(message))
 
 	ethClient, err := ethclient.Dial(infura)

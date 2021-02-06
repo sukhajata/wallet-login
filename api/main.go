@@ -53,7 +53,7 @@ func postVerifySignatureHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf(`{ valid: %t }`, valid)))
+	w.Write([]byte(fmt.Sprintf("%t", valid)))
 }
 
 func postIsSmartContractHandler(w http.ResponseWriter, req *http.Request) {
@@ -73,8 +73,7 @@ func postIsSmartContractHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//w.Write([]byte(fmt.Sprintf(`{ isSmartContract: %t }`, isSmartContract)))
-	fmt.Fprintf(w, `{ isSmartContract: %t }`, isSmartContract)
+	w.Write([]byte(fmt.Sprintf("%t", isSmartContract)))
 }
 
 
@@ -87,15 +86,16 @@ func postVerifySmartContractHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	fmt.Println(request)
 
 	hash := crypto.Keccak256Hash([]byte(request.Message))
-	isSmartContract, err := myVerifier.VerifySmartContractWallet(request.Address, hash, []byte(request.Signature))
+	valid, err := myVerifier.VerifySmartContractWallet(request.Address, hash, []byte(request.Signature))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf(`{ isSmartContract: %t }`, isSmartContract)))
+	w.Write([]byte(fmt.Sprintf("%t", valid)))
 }
 
 func main() {

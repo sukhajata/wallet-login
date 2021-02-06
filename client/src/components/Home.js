@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
+import Typography from '@material-ui/core/Typography';
 import WalletSelector from './WalletSelector';
 //import { logout } from '../scripts/walletconnect';
 import { useSelector, useDispatch } from 'react-redux';
@@ -48,9 +49,9 @@ const Home = () => {
         >
           Login
       </Button>
-      {error && <div>{error}</div>}
-      {address && name &&
-        <div style={{ paddingTop: 20 }}>Connected to {name} address {address}</div>
+      {error && <Typography style={{ paddingTop: 20 }}>{error}</Typography>}
+      {address &&
+        <Typography style={{ paddingTop: 20 }}>Connected to address {address}</Typography>
       }
       <Modal
         open={modalOpen}

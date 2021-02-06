@@ -30,11 +30,11 @@ export const isSmartContractWallet = async (address) => {
   return response.data;
 };
 
-export const verifySmartContractWallet = async (address, hash, signature) => {
+export const verifySmartContractWallet = async (address, message, signature) => {
   const url = `${api}/verify-smart-contract`;
   const data = {
     address,
-    hash,
+    message,
     signature
   }
   const response = await axios.post(url, data, getOptions());
