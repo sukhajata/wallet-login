@@ -10,9 +10,12 @@ To run api server
 ```sh
 go run main.go
 ```
-To run React frontend, in a new terminal window
+To test and run React frontend, in a new terminal window:
 ```sh
 cd client
 npm install
+npm test
 npm start
 ```
+App will be available at http://localhost:3000
+

@@ -20,11 +20,13 @@ export const connectWithWalletConnect = async (successCallback, errorCallback) =
   // Subscribe to chainId change
   provider.on("chainChanged", (chainId) => {
     console.log(chainId);
+    window.location.reload();
   });
 
   // Subscribe to session disconnection
   provider.on("disconnect", (code, reason) => {
     console.log(code, reason);
+    window.location.reload();
   });
 
   //  Enable session (triggers QR Code modal)

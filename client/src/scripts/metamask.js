@@ -8,6 +8,11 @@ export const signInMetamask = async (successCallback, errorCallback) => {
 
   if (window.ethereum.isMetaMask) {
     try {
+      window.ethereum.on('disconnect', (error) => {
+        console.log(error);
+        window.location.reload();
+      });
+
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       //console.log(accounts[0]);
       
