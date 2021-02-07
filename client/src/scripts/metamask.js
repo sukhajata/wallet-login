@@ -39,7 +39,7 @@ export const signInMetamask = async (successCallback, errorCallback) => {
       }
 
     } catch (err) {
-      errorCallback(err.message);
+      errorCallback(err);
     }
 
   } else {

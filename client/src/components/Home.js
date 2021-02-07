@@ -55,8 +55,12 @@ const Home = () => {
 
   const onError = err => {
     console.log(err);
+    if (err && err.message) {
+      dispatch(setError(err.toString()));
+    } else {
+      dispatch(setError(err.toString()));
+    }
     setLoading(false);
-    dispatch(setError(err.toString()));
     closeModal();
   }
 
