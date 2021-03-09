@@ -1,14 +1,15 @@
 # wallet-login
-A client and API for logging into a browser based or smart contract wallet and verifying the signature.
+A Go API for verifying signatures. Supports smart contract wallets which implement [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)
 
 To test api
 ```sh
 cd api
-go test
+go test ./...
 ```
 To run api server
 ```sh
-go run main.go
+go build -o service ./cmd
+./service
 ```
 To test and run React frontend, in a new terminal window:
 ```sh

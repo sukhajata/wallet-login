@@ -112,7 +112,7 @@ func NewHTTPServer(myVerifier verifier.Verifier) {
 	})
 
 	router.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		_, err := fmt.Fprintf(w, "Welcome to the home page!")
+		_, err := fmt.Fprintf(w, "Welcome to signature verifier!")
 		if err != nil {
 			fmt.Println(err)
 		}
