@@ -6,8 +6,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"regexp"
 	"testing"
-
-	"github.com/ethereum/go-ethereum/crypto"
 )
 
 const (
@@ -25,9 +23,6 @@ func Test_Regex(t *testing.T) {
 // TestVerifier_IsSmartContract_True - result should be true
 func TestVerifier_IsSmartContract_True(t *testing.T) {
 	addressHex := "0x5119b5e3a7bff084732a7ec41efed8aa0c4cd6d4"
-	//addressHex := "0x096CEb79d7D4112d7C86B3Fc24fB6b69Fa52cbD6" // trust
-	//addressHex := "0xf77642C9b7d1CA7f21547ab1517edCBF63ea47B5" // pillar
-	// "0xFe269c3A935e93E4425dD6f88c04215d92929D0E" // imToken
 
 	ethClient, err := ethclient.Dial(infura)
 	if err != nil {
@@ -53,32 +48,6 @@ func TestVerifier_IsSmartContract_False(t *testing.T) {
 	result, err := myVerifier.IsSmartContract(addressHex)
 	assert.NoError(t, err)
 	assert.Equal(t, false, result)
-}
-
-/*
-{
-  "address": "0x096CEb79d7D4112d7C86B3Fc24fB6b69Fa52cbD6",
-  "msg": "Hi from chainsafe, please sign this message so we can connect you to our app.",
-  "sig": "0xd695d1645ad0dad0c69ca59de08619d6cfc76890be841e7012f0a3b52c8b584829f5824c74783c59eec1fa8ba09ba2c18e767ef8356e2eea6cd800bce5907d231b",
-  "version": "2"
-}
- */
-func TestVerifier_VerifySmartContractWallet(t *testing.T) {
-	addressHex := "0x096CEb79d7D4112d7C86B3Fc24fB6b69Fa52cbD6"
-	message := "Hi from Wallet Login Example. Please sign this message so we can verify that you are the owner of this wallet"
-	signature := "0xac1c77e7445d2299d437c00c7a0c1d305e843607bebed506df18fa474a9ec001624538cc128dd06edf464255fa909bdb46cba87773462825bd9d7e3273aaa7811b"
-	hash := crypto.Keccak256Hash([]byte(message))
-
-	ethClient, err := ethclient.Dial(infura)
-	if err != nil {
-		panic(err)
-	}
-
-	myVerifier := NewVerifier(ethClient)
-	result, err := myVerifier.VerifySmartContractWallet(addressHex, hash, []byte(signature))
-
-	assert.NoError(t, err)
-	assert.Equal(t, true, result)
 }
 
 // TestVerifier_VerifySignature_True - the result should be true

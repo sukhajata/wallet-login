@@ -1,27 +1,26 @@
-package main
+package rest
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/rs/cors"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/sukhajata/wallet-login/api/verifier"
+	"github.com/sukhajata/wallet-login/api/internal/verifier"
 	"github.com/urfave/negroni"
 )
 
-var (
+type HTTPServer struct {
 	myVerifier verifier.Verifier
-)
+}
 
 // signatureVerificationRequest - a signature validation request
 type signatureVerificationRequest struct {
 	Signature string `json:"signature"`
 	Message string `json:"message"`
-	Address string `json: "address"`
+	Address string `json:"address"`
 }
 
 // isSmartContractRequest - a request to see if an address is a smart contract
@@ -29,15 +28,7 @@ type isSmartContractRequest struct {
 	Address string `json:"address"`
 }
 
-
-type smartContractVerificationRequest struct {
-	Address string `json:"address"`
-	Message string `json:"message"`
-	Signature string `json:"signature"`
-}
-
-
-func postVerifySignatureHandler(w http.ResponseWriter, req *http.Request) {
+func (s *HTTPServer) postVerifySignatureHandler(w http.ResponseWriter, req *http.Request) {
 	//decode the request body into a signatureVerificationRequest
 	decoder := json.NewDecoder(req.Body)
 	var request signatureVerificationRequest
@@ -47,16 +38,19 @@ func postVerifySignatureHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	valid, err := myVerifier.VerifySignature(request.Signature, request.Message, request.Address)
+	valid, err := s.myVerifier.VerifySignature(request.Signature, request.Message, request.Address)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("%t", valid)))
+	_, err = w.Write([]byte(fmt.Sprintf("%t", valid)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-func postIsSmartContractHandler(w http.ResponseWriter, req *http.Request) {
+func (s *HTTPServer) postIsSmartContractHandler(w http.ResponseWriter, req *http.Request) {
 	//decode the request body
 	decoder := json.NewDecoder(req.Body)
 	var request isSmartContractRequest
@@ -67,20 +61,23 @@ func postIsSmartContractHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Println(request)
 
-	isSmartContract, err := myVerifier.IsSmartContract(request.Address)
+	isSmartContract, err := s.myVerifier.IsSmartContract(request.Address)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("%t", isSmartContract)))
+	_, err = w.Write([]byte(fmt.Sprintf("%t", isSmartContract)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 
-func postVerifySmartContractHandler(w http.ResponseWriter, req *http.Request) {
+func (s *HTTPServer) postVerifySmartContractHandler(w http.ResponseWriter, req *http.Request) {
 	//decode the request body into a signatureVerificationRequest
 	decoder := json.NewDecoder(req.Body)
-	var request smartContractVerificationRequest
+	var request signatureVerificationRequest
 	err := decoder.Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -89,21 +86,22 @@ func postVerifySmartContractHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(request)
 
 	hash := crypto.Keccak256Hash([]byte(request.Message))
-	valid, err := myVerifier.VerifySmartContractWallet(request.Address, hash, []byte(request.Signature))
+	valid, err := s.myVerifier.VerifySmartContractWallet(request.Address, hash, []byte(request.Signature))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("%t", valid)))
+	_, err = w.Write([]byte(fmt.Sprintf("%t", valid)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-func main() {
-	ethClient, err := ethclient.Dial("https://mainnet.infura.io/v3/b0f6ca46883b4a409b757b1ac341133e")
-	if err != nil {
-		panic(err)
+func NewHTTPServer(myVerifier verifier.Verifier) {
+	s := &HTTPServer{
+		myVerifier: myVerifier,
 	}
-	myVerifier = verifier.NewVerifier(ethClient)
 
 	router := mux.NewRouter()
 
@@ -111,16 +109,18 @@ func main() {
 		AllowedOrigins:   []string{"*"},
 		AllowedHeaders:   []string{"X-Requested-With", "Content-Type"},
 		AllowedMethods:   []string{"GET", "POST", "HEAD", "OPTIONS"},
-		//Debug: true,
 	})
 
 	router.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "Welcome to the home page!")
+		_, err := fmt.Fprintf(w, "Welcome to the home page!")
+		if err != nil {
+			fmt.Println(err)
+		}
 	})
 
-	router.HandleFunc("/verify-signature", postVerifySignatureHandler).Methods("POST")
-	router.HandleFunc("/is-smart-contract", postIsSmartContractHandler).Methods("POST")
-	router.HandleFunc("/verify-smart-contract", postVerifySmartContractHandler).Methods("POST")
+	router.HandleFunc("/verify-signature", s.postVerifySignatureHandler).Methods("POST")
+	router.HandleFunc("/is-smart-contract", s.postIsSmartContractHandler).Methods("POST")
+	router.HandleFunc("/verify-smart-contract", s.postVerifySmartContractHandler).Methods("POST")
 
 	n := negroni.New()
 	n.Use(negroni.NewRecovery())

@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/sukhajata/wallet-login/api/erc1271"
+	"github.com/sukhajata/wallet-login/api/internal/erc1271"
 	"regexp"
 )
 
