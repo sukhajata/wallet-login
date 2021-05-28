@@ -1,5 +1,5 @@
 # wallet-login
-A Go API for verifying signatures. Supports smart contract wallets which implement [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)
+A Go API for verifying signatures and React UI for testing. Supports smart contract wallets which implement [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271)
 
 To test api
 ```sh
